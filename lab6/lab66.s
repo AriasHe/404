@@ -14,52 +14,46 @@ main:
     la t1, input_address
     lbu t2, 0(t1)
     lbu t3, 2(t1)
-    lbu t4, 4(t1)x
+    lbu t4, 4(t1)
     beq t3, s4, ler
-    lbu t5, 4(t1)
-    sub t5, t5, a6
+teste:
     sub t2, t2, a6
     sub t3, t3, a6
     
 pular:
     mv s0, ra
 
-    li s7,92
+    jal read
+    la t1, input_address
+    lbu t4, 0(t1)
+    sub t4, t4, a6
 
-    mul a0,t2,t5
+    mul a0,t2,t4
     div a1,a0,t3
     addi a1, a1, '0'
 
+
+
     jal write_digits
-    
-    li a7, 93 # exit
-    ecall
+    mv ra, s1
+    mv s0, ra
+
+    ret
 ler:
     li a7,10
-    li s7,92
+    lbu t2, 0(t1)
     lbu t6, 1(t1)
-    lbu t3, 3(t1)
-    lbu t4, 4(t1)
     sub t2, t2, a6
-   
     sub t6, t6, a6
-    sub t3, t3, a6
     mul t2,t2,a7
-    add t2,t2,t6
-    bne t4,s7,dados
-    lbu t5,6(t1)
-    sub t5, t5, a6
-    j pular
-dados:
-    lbu t5,7(t1)
-    sub t5, t5, a6
-    sub t3, t3, a6
-    sub t4, t4, a6
-    mul t3,t3,a7
-    add t3,t3,t4
+    add t2,t2,t6 
     j pular
 
-
+ler_2:
+    mv s0, ra
+    
+    mv ra, s0
+    ret
 
 
 write_digits:
@@ -74,7 +68,7 @@ write_digits:
 read:
     li a0, 0             # file descriptor = 0 (stdin)
     la a1, input_address # buffer
-    li a2, 9            # size - Reads 6 bytes.
+    li a2, 4         # size - Reads 24 bytes.
     li a7, 63            # syscall read (63)
     ecall
     ret
@@ -88,6 +82,6 @@ write:
     ret
 .bss
 
-input_address: .skip 0x9  # buffer
+input_address: .skip 0x6  # buffer
 
-result: .skip 0x4
+result: .skip 0x4   
